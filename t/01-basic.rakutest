@@ -1,0 +1,6 @@
+use Test;
+use App::Ecosystems;
+
+pass "replace me";
+
+done-testing;
