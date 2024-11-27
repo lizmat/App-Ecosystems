@@ -52,15 +52,26 @@ my sub args-to-capture(@words) {
     my $verbose = $app.verbose;
     my role verbose { has $.verbose is built(:bind) }
 
-    for @words.skip -> $word {
-        with $word.index("=",1) -> $index {
-            my $key := $word.substr(0,$index);
-            $key eq any-identity-parts
-              ?? (%hash{$key} := $word.substr($index + 1))
-              !! say "'$key' is not a supported key";
-        }
-        elsif $word eq 'verbose' {
+    sub add-key($key, $value) {
+        $key eq any-identity-parts
+          ?? (%hash{$key} := $value)
+          !! say "'$key' is not a supported key";
+    }
+
+    for @words.skip.map({
+        my @parts = .split(/ ':' <before \w+ '<'>/);
+        @parts.shift unless @parts.head;
+        @parts.Slip
+    }) -> $word {
+        if $word eq 'verbose' {
             $verbose = True;
+        }
+        orwith $word.index("=",1) -> $index {
+            add-key($word.substr(0,$index), $word.substr($index + 1));
+        }
+        elsif $word.ends-with('>') {
+            add-key($word.substr(0,$_), $word.substr($_ + 1).chop)
+              with $word.index('<');
         }
         else {
             @list.push: $word;
@@ -89,6 +100,7 @@ sub help($_) {
 #- handlers --------------------------------------------------------------------
 
 my sub catch($_) {
+    setter-getter-bool $_, 'catch', 'exception catching', :object($*COMMANDS)
 }
 
 my sub dependencies($_) {
@@ -116,7 +128,34 @@ Add 'verbose' for recursive depencies";
 }
 
 my sub distro($_) {
-    say "distro";
+    my $capture := args-to-capture($_);
+    my $needle  := build(|$capture);
+
+    my $eco := $*ECO;
+    if $eco.find-distro-names(|$capture).sort(*.fc) -> @names {
+        my $verbose := $capture.verbose;
+
+        say $verbose
+          ?? "Distributions that match '$needle' and their frequency"
+          !! "Distributions that match '$needle'
+Add 'verbose' to also see their frequency";
+        line;
+        if $verbose {
+            my %identities := $eco.distro-names;
+            for @names -> $name {
+                my $versions := %identities{$name}.elems;
+                say $versions == 1
+                  ?? $name
+                  !! "$name ({$versions}x)";
+            }
+        }
+        else {
+            .say for @names;
+        }
+    }
+    else {
+        say "No distributions found for: $needle";
+    }
 }
 
 my sub set-ecosystem($_) {
@@ -129,19 +168,111 @@ my sub set-ecosystem($_) {
 }
 
 my sub identity($_) {
-    say "identity";
+    my $capture := args-to-capture($_);
+    my $needle  := build(|$capture);
+
+    my $eco := $*ECO;
+    my $verbose := $capture.verbose;
+    if $eco.find-identities(|$capture, :all($verbose)).sort(*.fc) -> @ids {
+        say $verbose
+          ?? "All identities that match '$needle'"
+          !! "Most recent version of identities that match '$needle'
+Add 'verbose' to see all identities";
+        line;
+        .say for @ids;
+    }
+    else {
+        say "No identities found matching: $needle";
+    }
 }
 
 my sub meta($_) {
-    say "meta";
+    my $capture := args-to-capture($_);
+
+    # Extract any additional positionals
+    my @list        = $capture.list;
+    my @additional := @list.splice(1);
+    $capture       := Capture.new(:@list, :hash($capture.hash));
+
+    my $needle := build(|$capture);
+    my $eco := $*ECO;
+    if $eco.resolve(|$capture) -> $identity {
+        if $eco.identities{$identity} -> $found {
+            say "Meta information of $identity @additional[]";
+            say "Resolved from: $needle" if $needle ne $identity;
+            line;
+
+            my $data := $found;
+            while @additional
+              && $data ~~ Associative
+              && $data{@additional.shift} -> $deeper {
+                $data := $deeper;
+            }
+            say $eco.to-json: $data;
+        }
+        else {
+            say "No meta information for '$identity' found";
+        }
+    }
+    else {
+        say "'$needle' did not resolve to a known identity";
+    }
 }
 
 my sub reverse-dependencies($_) {
-    say "reverse-dependencies";
+    my $capture := args-to-capture($_);
+    my $needle := build(|$capture);
+
+    my $eco := $*ECO;
+    with $eco.resolve(|$capture) // $needle -> $identity {
+        if $capture.verbose {
+            if $eco.reverse-dependencies{$identity} -> @identities {
+                say "Reverse dependency identities of $identity";
+                say "Resolved from: $needle" if $needle ne $identity;
+                line;
+                .say for Ecosystem.sort-identities: @identities;
+            }
+            else {
+                say "'$identity' does not have any reverse dependencies";
+            }
+        }
+        else {
+            my $short-name := short-name($identity);
+            if $eco.reverse-dependencies-for-short-name($short-name) -> @sn {
+                say "Reverse dependencies of $short-name
+Add 'verbose' to see reverse dependency identities";
+                line;
+                .say for @sn.sort(*.fc)
+            }
+            else {
+                say "'$short-name' does not have any reverse dependencies";
+            }
+        }
+    }
+    else {
+        say "'$needle' did not resolve to a known identity";
+    }
 }
 
 my sub river($_) {
-    say "river";
+    my $capture := args-to-capture($_);
+    my $verbose := $capture.verbose;
+    my $top     := $verbose ?? 20 !! 3;
+    $top        := $_ with $capture.head andthen .Int;
+
+    say $verbose
+      ?? "Top $top distributions with their dependees"
+      !! "Top $top distributions and number of dependees";
+    say "Add 'verbose' to also see the actual dependees"
+      unless $verbose;
+
+    for $*ECO.river.sort( -> $a, $b {
+        $b.value.elems cmp $a.value.elems
+          || $a.key.fc cmp $b.key.fc
+    }).head($top) {
+        say "$_.key() ($_.value.elems())";
+        say "  $_.value()[]\n" if $verbose
+    }
 }
 
 my sub unresolvable($_) {
@@ -186,13 +317,11 @@ Add 'verbose' to also see their distribution";
 #- commands --------------------------------------------------------------------
 
 my $commands = Commands.new(
-  default  => { say "Unrecognized command: $_" },
+  default  => { say "Unrecognized command: $_" if $_ },
   commands => (
     api                  => { setter-getter $_, 'api' },
     authority            => { setter-getter $_, 'auth', 'authority' },
-    catch                => {
-      setter-getter-bool $_, 'catch', 'exception catching', :object($commands)
-    },
+    catch                => &catch,
     dependencies         => &dependencies,
     distro               => &distro,
     ecosystem            => &set-ecosystem,
