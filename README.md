@@ -15,7 +15,9 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-App::Ecosystems provides an interactive shell for interrogating and inspecting the Raku module ecosystem. This shell is both provided as an exported `ecosystems` subroutine, as well as a command-line script called `ecosystems`.
+App::Ecosystems provides an interactive shell for interrogating and inspecting the Raku module ecosystem, providing an interactive interface to the API provided by the [`Ecosystem`](https://raku.land/zef:lizmat/Ecosystem) module.
+
+This shell is both provided as an exported `ecosystems` subroutine, as well as a command-line script called `ecosystems`.
 
 COMMANDS
 ========
@@ -27,8 +29,24 @@ Also note that each command may be shortened to a unique root: so just entering 
 api
 ---
 
+    rea > api
+    Default api is: 'Any'
+
+    rea > api 1
+    Default api set to '1'
+
+Show or set the default "api" value to be used in ecosystem searches.
+
 authority
 ---------
+
+    rea > auth
+    Default authority is: 'Any'
+
+    rea > auth zef:raku-community-modules
+    Default authority set to 'zef:raku-community-modules'
+
+Show or set the default "auth" value to be used in ecosystem searches.
 
 catch
 -----
@@ -50,6 +68,14 @@ exit
 
 from
 ----
+
+    rea > from
+    Default from is: 'Any'
+
+    rea > from NQP
+    Default from set to 'NQP'
+
+Show or set the default "from" value to be used in ecosystem searches.
 
 help
 ----
@@ -83,6 +109,19 @@ verbose
 
 version
 -------
+
+    rea > version
+    Default version is: 'Any'
+
+    rea > version 0.0.3+
+    Default version set to '0.0.3+'
+
+Show or set the default "ver" value to be used in ecosystem searches.
+
+SEE ALSO
+--------
+
+This module is basically a replacement of the [`CLI::Ecosystem`](https://raku.land/zef:lizmat/CLI::Ecosystem) module, which suffers from noticeable startup delay because of ecosystem information loading on **each** invocation.
 
 AUTHOR
 ======

@@ -17,9 +17,12 @@ rea >
 =head1 DESCRIPTION
 
 App::Ecosystems provides an interactive shell for interrogating and
-inspecting the Raku module ecosystem.  This shell is both provided
-as an exported C<ecosystems> subroutine, as well as a command-line
-script called C<ecosystems>.
+inspecting the Raku module ecosystem, providing an interactive interface
+to the API provided by the L<C<Ecosystem>|https://raku.land/zef:lizmat/Ecosystem>
+module.
+
+This shell is both provided as an exported C<ecosystems> subroutine, as
+well as a command-line script called C<ecosystems>.
 
 =head1 COMMANDS
 
@@ -32,25 +35,167 @@ just entering "a" would be ambiguous, but "ap" would give you the
 "api" functionality.
 
 =head2 api
+
+=begin output
+
+rea > api
+Default api is: 'Any'
+
+rea > api 1
+Default api set to '1'
+
+=end output
+
+Show or set the default "api" value to be used in ecosystem searches.
+
 =head2 authority
+
+=begin output
+
+rea > auth
+Default authority is: 'Any'
+
+rea > auth zef:raku-community-modules
+Default authority set to 'zef:raku-community-modules'
+
+=end output
+
+Show or set the default "auth" value to be used in ecosystem searches.
+
+=begin output
+
+=end output
+
 =head2 catch
+
+=begin output
+
+=end output
+
 =head2 dependencies
+
+=begin output
+
+=end output
+
 =head2 distro
+
+=begin output
+
+=end output
+
 =head2 ecosystem
+
+=begin output
+
+=end output
+
 =head2 editor
+
+=begin output
+
+=end output
+
 =head2 exit
+
+=begin output
+
+=end output
+
 =head2 from
+
+=begin output
+
+rea > from
+Default from is: 'Any'
+
+rea > from NQP
+Default from set to 'NQP'
+
+=end output
+
+Show or set the default "from" value to be used in ecosystem searches.
+
 =head2 help
+
+=begin output
+
+=end output
+
 =head2 identity
+
+=begin output
+
+=end output
+
 =head2 meta
+
+=begin output
+
+=end output
+
 =head2 quit
+
+=begin output
+
+=end output
+
 =head2 reverse-dependencies
+
+=begin output
+
+=end output
+
 =head2 river
+
+=begin output
+
+=end output
+
 =head2 unresolvable
+
+=begin output
+
+=end output
+
 =head2 unversioned
+
+=begin output
+
+=end output
+
 =head2 use-target
+
+=begin output
+
+=end output
+
 =head2 verbose
+
+=begin output
+
+=end output
+
 =head2 version
+
+=begin output
+
+rea > version
+Default version is: 'Any'
+
+rea > version 0.0.3+
+Default version set to '0.0.3+'
+
+=end output
+
+Show or set the default "ver" value to be used in ecosystem searches.
+
+=head2 SEE ALSO
+
+This module is basically a replacement of the
+L<C<CLI::Ecosystem>|https://raku.land/zef:lizmat/CLI::Ecosystem> module,
+which suffers from noticeable startup delay because of ecosystem
+information loading on B<each> invocation.
 
 =head1 AUTHOR
 
