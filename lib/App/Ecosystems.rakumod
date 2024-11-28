@@ -276,11 +276,44 @@ my sub river($_) {
 }
 
 my sub unresolvable($_) {
-    say "unresolvable";
+    my $capture := args-to-capture($_);
+    my $verbose := $capture.verbose;
+
+    if $*ECO.unresolvable-dependencies(:all($verbose)) -> %ud {
+        say $verbose
+          ?? "All unresolvable identities"
+          !! "Unresolvable identities in most recent versions only
+Add 'verbose' to see all unresolvable identities";
+        say "Add 'from=xxxx' to also see identities with a :from<> setting"
+          unless my $from := $capture<from>;
+        line;
+
+        for %ud.keys.sort(*.fc) {
+            next if !$from && from($_);
+            say "$_";
+            say "  $_" for %ud{$_};
+            say "";
+        }
+    }
+    else {
+        say "No unresolvable entities";
+    }
 }
 
 my sub unversioned($_) {
-    say "unversioned";
+    my $capture := args-to-capture($_);
+    my $verbose := $capture.verbose;
+
+    my @unversioned = $*ECO.unversioned-distro-names;
+    say "@unversioned.elems() distributions without any release with a valid version";
+    if $verbose {
+        line;
+        .say for @unversioned;
+    }
+    else {
+        say "Add 'verbose' to list the distribution names";
+        line;
+    }
 }
 
 my sub use-target($_) {
