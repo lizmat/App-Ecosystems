@@ -8,16 +8,81 @@ App::Ecosystems - Interactive Ecosystem Inspector
 SYNOPSIS
 ========
 
-```raku
-use App::Ecosystems;
-
-ecosystems;
-```
+    $ ecosystems
+    Loading rea ecosystem...
+    rea >
 
 DESCRIPTION
 ===========
 
 App::Ecosystems provides an interactive shell for interrogating and inspecting the Raku module ecosystem. This shell is both provided as an exported `ecosystems` subroutine, as well as a command-line script called `ecosystems`.
+
+COMMANDS
+========
+
+These are the available commands in alphabetical order. Note that if `Linenoise` or `Terminal::LineEditor` is used as the underlying interface, tab completion will be available for all of these commands.
+
+Also note that each command may be shortened to a unique root: so just entering "a" would be ambiguous, but "ap" would give you the "api" functionality.
+
+api
+---
+
+authority
+---------
+
+catch
+-----
+
+dependencies
+------------
+
+distro
+------
+
+ecosystem
+---------
+
+editor
+------
+
+exit
+----
+
+from
+----
+
+help
+----
+
+identity
+--------
+
+meta
+----
+
+quit
+----
+
+reverse-dependencies
+--------------------
+
+river
+-----
+
+unresolvable
+------------
+
+unversioned
+-----------
+
+use-target
+----------
+
+verbose
+-------
+
+version
+-------
 
 AUTHOR
 ======
