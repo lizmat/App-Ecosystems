@@ -51,20 +51,76 @@ Show or set the default "auth" value to be used in ecosystem searches.
 catch
 -----
 
+    rea > catch
+    Exception catching is: ON
+
+    rea > catch off
+    Exception catching set to OFF
+
+Show whether exceptions will be caught or not, or change that setting. By deault any exceptions during execution will be caught and only a one-line message of the error will be shown. By default it is **ON**. Switching it to **OFF** will cause an exception to show a complete backtrace and exit the program, which may be desirable during debugging and/or error reporting.
+
 dependencies
 ------------
+
+    rea > dependencies Map::Match
+    Dependencies of Map::Match:ver<0.0.5>:auth<zef:lizmat>
+    Add 'verbose' for recursive depencies
+    --------------------------------------------------------------------------------
+    Hash::Agnostic:ver<0.0.16>:auth<zef:lizmat>
+    Map::Agnostic:ver<0.0.10>:auth<zef:lizmat>
+
+Show the dependencies of a given distribution name. If the distribution name is not fully qualified with `auth`, `ver` and `api`, then the most recent version will be assumed.
+
+    rea > dependencies Map::Match :ver<0.0.1>
+    Dependencies of Map::Match:ver<0.0.1>:auth<zef:lizmat>
+    Add 'verbose' for recursive depencies
+    --------------------------------------------------------------------------------
+    Hash::Agnostic:ver<0.0.10>:auth<zef:lizmat>
+    Map::Agnostic:ver<0.0.6>:auth<zef:lizmat>
+
+You can also specify a version if you'd like to see the dependency information of that version of the distribution.
 
 distro
 ------
 
+    rea > distro Agnostic
+    Distributions that match 'Agnostic'
+    Add 'verbose' to also see their frequency
+    --------------------------------------------------------------------------------
+    Array::Agnostic
+    Hash::Agnostic
+    List::Agnostic
+    Map::Agnostic
+
+Show the names of the distributions with the given search term. For now any distribution name that contains the given string, will be included.
+
 ecosystem
 ---------
+
+    rea > ecosystem
+    Using the rea ecosystem
+
+    rea > ecosystem fez
+    Loading fez ecosystem...
+    fez >
+
+Show or set the ecosystem to be used in ecosystem searches. Note that the currently used ecosystem is also shown in the prompt.
 
 editor
 ------
 
+    rea > editor
+    LineEditor
+
+Show the name of the underlying editor that is being used. Note that only `Linenoise` and `LineEditor` allow tab-completions.
+
 exit
 ----
+
+    rea > exit
+    $
+
+Exit and save any history.
 
 from
 ----
@@ -80,14 +136,56 @@ Show or set the default "from" value to be used in ecosystem searches.
 help
 ----
 
+    rea > help
+    Available commands:
+    --------------------------------------------------------------------------------
+    api authority catch dependencies distro ecosystem editor exit from help
+    identity meta quit reverse-dependencies river unresolvable unversioned
+    use-target verbose version
+
+Show available commands.
+
 identity
 --------
 
 meta
 ----
 
+    rea > meta actions
+    Meta information of actions:ver<0.0.2>:auth<zef:lizmat>
+    Resolved from: actions
+    --------------------------------------------------------------------------------
+    {
+      "auth": "zef:lizmat",
+      "authors": [
+        "Elizabeth Mattijsen"
+      ],
+      "description": "Introduce \"actions\" keyword",
+      "dist": "actions:ver<0.0.2>:auth<zef:lizmat>",
+      "license": "Artistic-2.0",
+      "name": "actions",
+      "perl": "6.d",
+      "provides": {
+        "actions": "lib/actions.rakumod"
+      },
+      "release-date": "2024-09-23",
+      "source-url": "https://raw.githubusercontent.com/raku/REA/main/archive/A/actions/actions%3Aver%3C0.0.2%3E%3Aauth%3Czef%3Alizmat%3E.tar.gz",
+      "tags": [
+        "GRAMMAR",
+        "ACTIONS"
+      ],
+      "version": "0.0.2"
+    }
+
+Show the meta information of the given distribution name.
+
 quit
 ----
+
+    rea > quit
+    $
+
+Exit and save any history.
 
 reverse-dependencies
 --------------------
@@ -95,17 +193,49 @@ reverse-dependencies
 river
 -----
 
+    rea > river
+    Top 3 distributions and number of dependees
+    Add 'verbose' to also see the actual dependees
+    JSON::Fast (398)
+    File::Directory::Tree (249)
+    MIME::Base64 (233)
+
+Show the N distributions (defaults to **3**) that have the most reverse dependencies (aka: are most "up-stream").
+
 unresolvable
 ------------
 
 unversioned
 -----------
 
+    rea > unversioned
+    Found 105 distributions that did not have a release with a valid version
+    Add 'verbose' to list the distribution names
+
+Show how many distributions there are in the ecosystem without valid version information (and which did **not** have a later release with a valid version value). Optionally also list the names of these distributions.
+
 use-target
 ----------
 
+    rea > use-target Crane::A
+    Use targets that match Crane::A
+    Add 'verbose' to also see their distribution
+    --------------------------------------------------------------------------------
+    Crane::Add
+    Crane::At
+
+Show the names of the `use` targets with the given search term (aka search all keys that are specified in `provides` sections of distributions in the ecosystem. For now, any name that contains the given string, will be included.
+
 verbose
 -------
+
+    rea > verbose
+    Verbosity is: OFF
+
+    rea > verbose on
+    Verbosity set to ON
+
+Show or set the default verbosity level to be used in showing the result of ecosystem searches. The default is **OFF**.
 
 version
 -------

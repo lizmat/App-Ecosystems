@@ -62,45 +62,112 @@ Default authority set to 'zef:raku-community-modules'
 
 Show or set the default "auth" value to be used in ecosystem searches.
 
-=begin output
-
-=end output
-
 =head2 catch
 
 =begin output
 
+rea > catch
+Exception catching is: ON
+
+rea > catch off
+Exception catching set to OFF
+
 =end output
+
+Show whether exceptions will be caught or not, or change that setting.
+By deault any exceptions during execution will be caught and only a
+one-line message of the error will be shown.  By default it is B<ON>.
+Switching it to B<OFF> will cause an exception to show a complete
+backtrace and exit the program, which may be desirable during debugging
+and/or error reporting.
 
 =head2 dependencies
 
 =begin output
 
+rea > dependencies Map::Match
+Dependencies of Map::Match:ver<0.0.5>:auth<zef:lizmat>
+Add 'verbose' for recursive depencies
+--------------------------------------------------------------------------------
+Hash::Agnostic:ver<0.0.16>:auth<zef:lizmat>
+Map::Agnostic:ver<0.0.10>:auth<zef:lizmat>
+
 =end output
+
+Show the dependencies of a given distribution name.  If the distribution
+name is not fully qualified with C<auth>, C<ver> and C<api>, then the
+most recent version will be assumed.
+
+=begin output
+
+rea > dependencies Map::Match :ver<0.0.1>
+Dependencies of Map::Match:ver<0.0.1>:auth<zef:lizmat>
+Add 'verbose' for recursive depencies
+--------------------------------------------------------------------------------
+Hash::Agnostic:ver<0.0.10>:auth<zef:lizmat>
+Map::Agnostic:ver<0.0.6>:auth<zef:lizmat>
+
+=end output
+
+You can also specify a version if you'd like to see the dependency
+information of that version of the distribution.
 
 =head2 distro
 
 =begin output
 
+rea > distro Agnostic
+Distributions that match 'Agnostic'
+Add 'verbose' to also see their frequency
+--------------------------------------------------------------------------------
+Array::Agnostic
+Hash::Agnostic
+List::Agnostic
+Map::Agnostic
+
 =end output
+
+Show the names of the distributions with the given search term.  For now
+any distribution name that contains the given string, will be included.
 
 =head2 ecosystem
 
 =begin output
 
+rea > ecosystem
+Using the rea ecosystem
+
+rea > ecosystem fez
+Loading fez ecosystem...
+fez >
+
 =end output
+
+Show or set the ecosystem to be used in ecosystem searches.  Note that
+the currently used ecosystem is also shown in the prompt.
 
 =head2 editor
 
 =begin output
 
+rea > editor
+LineEditor
+
 =end output
+
+Show the name of the underlying editor that is being used.  Note that
+only C<Linenoise> and C<LineEditor> allow tab-completions.
 
 =head2 exit
 
 =begin output
 
+rea > exit
+$
+
 =end output
+
+Exit and save any history.
 
 =head2 from
 
@@ -120,7 +187,16 @@ Show or set the default "from" value to be used in ecosystem searches.
 
 =begin output
 
+rea > help
+Available commands:
+--------------------------------------------------------------------------------
+api authority catch dependencies distro ecosystem editor exit from help
+identity meta quit reverse-dependencies river unresolvable unversioned
+use-target verbose version
+
 =end output
+
+Show available commands.
 
 =head2 identity
 
@@ -132,13 +208,46 @@ Show or set the default "from" value to be used in ecosystem searches.
 
 =begin output
 
+rea > meta actions
+Meta information of actions:ver<0.0.2>:auth<zef:lizmat>
+Resolved from: actions
+--------------------------------------------------------------------------------
+{
+  "auth": "zef:lizmat",
+  "authors": [
+    "Elizabeth Mattijsen"
+  ],
+  "description": "Introduce \"actions\" keyword",
+  "dist": "actions:ver<0.0.2>:auth<zef:lizmat>",
+  "license": "Artistic-2.0",
+  "name": "actions",
+  "perl": "6.d",
+  "provides": {
+    "actions": "lib/actions.rakumod"
+  },
+  "release-date": "2024-09-23",
+  "source-url": "https://raw.githubusercontent.com/raku/REA/main/archive/A/actions/actions%3Aver%3C0.0.2%3E%3Aauth%3Czef%3Alizmat%3E.tar.gz",
+  "tags": [
+    "GRAMMAR",
+    "ACTIONS"
+  ],
+  "version": "0.0.2"
+}
+
 =end output
+
+Show the meta information of the given distribution name.
 
 =head2 quit
 
 =begin output
 
+rea > quit
+$
+
 =end output
+
+Exit and save any history.
 
 =head2 reverse-dependencies
 
@@ -150,7 +259,17 @@ Show or set the default "from" value to be used in ecosystem searches.
 
 =begin output
 
+rea > river
+Top 3 distributions and number of dependees
+Add 'verbose' to also see the actual dependees
+JSON::Fast (398)
+File::Directory::Tree (249)
+MIME::Base64 (233)
+
 =end output
+
+Show the N distributions (defaults to B<3>) that have the most reverse
+dependencies (aka: are most "up-stream").
 
 =head2 unresolvable
 
@@ -162,19 +281,49 @@ Show or set the default "from" value to be used in ecosystem searches.
 
 =begin output
 
+rea > unversioned
+Found 105 distributions that did not have a release with a valid version
+Add 'verbose' to list the distribution names
+
 =end output
+
+Show how many distributions there are in the ecosystem without valid
+version information (and which did B<not> have a later release with a
+valid version value).  Optionally also list the names of these
+distributions.
 
 =head2 use-target
 
 =begin output
 
+rea > use-target Crane::A
+Use targets that match Crane::A
+Add 'verbose' to also see their distribution
+--------------------------------------------------------------------------------
+Crane::Add
+Crane::At
+
 =end output
+
+Show the names of the C<use> targets with the given search term
+(aka search all keys that are specified in C<provides> sections
+of distributions in the ecosystem.  For now, any name that contains
+the given string, will be included.
 
 =head2 verbose
 
 =begin output
 
+rea > verbose
+Verbosity is: OFF
+
+rea > verbose on
+Verbosity set to ON
+
 =end output
+
+Show or set the default verbosity level to be used in showing the result
+of ecosystem searches.  The default is B<OFF>.
 
 =head2 version
 

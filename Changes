@@ -1,8 +1,14 @@
 Revision history for App::Ecosystems
 
 {{$NEXT}}
-    - Make the "editor" command work again
-    - Add documentation about the available commands
+
+0.0.2  2024-11-28T20:56:42+01:00
+    - Bumped dependency on "Ecosystem" to fix handling of
+      distributions without a name
+    - Made the "editor" command work again
+    - By default, only show meaningful fields with the
+      "meta" command, use "verbose" to see them all
+    - Added documentation about the available commands
 
 0.0.1  2024-11-28T15:16:44+01:00
     - Initial version

@@ -1,7 +1,7 @@
 #- prologue --------------------------------------------------------------------
 
 use Commands:ver<0.0.3+>:auth<zef:lizmat>;
-use Ecosystem:ver<0.0.20+>:auth<zef:lizmat>;
+use Ecosystem:ver<0.0.21+>:auth<zef:lizmat>;
 use Identity::Utils:ver<0.0.11+>:auth<zef:lizmat>;
 use Prompt:ver<0.0.6+>:auth<zef:lizmat>;
 
@@ -215,6 +215,7 @@ Add 'verbose' to see all identities";
 
 my sub meta($_) {
     my $capture := args-to-capture($_);
+    my $verbose := $capture.verbose;
 
     # Extract any additional positionals
     my @list        = $capture.list;
@@ -228,11 +229,17 @@ my sub meta($_) {
             say "Resolved from: $needle" if $needle ne $identity;
             line;
 
-            my $data := $found;
+            my $data := $found.clone;
             while @additional
               && $data ~~ Associative
               && $data{@additional.shift} -> $deeper {
                 $data := $deeper;
+            }
+
+            # Only show fields with meaning unless verbose
+            if $data ~~ Associative && !$verbose {
+                my %data = $data.grep(*.value);
+                $data   := %data;
             }
             say $eco.to-json: $data;
         }
@@ -337,7 +344,6 @@ my sub unversioned($_) {
     }
     else {
         say "Add 'verbose' to list the distribution names";
-        line;
     }
 }
 
