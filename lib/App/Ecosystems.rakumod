@@ -10,23 +10,29 @@ my constant @identity-parts    = <ver auth api from>;
 my constant any-identity-parts = @identity-parts.any;
 
 #- helper subs -----------------------------------------------------------------
-# These all assume $*APP is set to the active App:Ecosystem object
-# and $*ECO is set to the acive Ecosystem object
+# These all assume $app is set to the active App:Ecosystem object
+# and $eco is set to the active Ecosystem object, and $commands
+# to the active Commands object
+
+# Defined here to allow for early visibility
+my $app;
+my $eco;
+my $commands;
 
 # Set / Get ecosystem string attribute value
 my sub setter-getter($_, $short, $long = $short) {
     with .[1] -> $new is copy {
         $new = Nil if $new eq 'Any';
-        $*APP."$short"() = $new;
+        $app."$short"() = $new;
         say "Default $long set to '{$new // 'Any'}'";
     }
     else {
-        say "Default $long is: '{$*APP."$short"() // 'Any'}'";
+        say "Default $long is: '{$app."$short"() // 'Any'}'";
     }
 }
 
 # Set / Get ecosystem bool attribute value
-my sub setter-getter-bool($_, $short, $long = $short, :$object = $*APP) {
+my sub setter-getter-bool($_, $short, $long = $short, :$object = $app) {
     with .[1] -> $new is copy {
         if $new.uc eq 'ON' | 'OFF' {
             $new .= uc;
@@ -48,7 +54,6 @@ my sub args-to-capture(@words) {
     my @list;
     my %hash;
 
-    my $app    := $*APP;
     my $verbose = $app.verbose;
     my role verbose { has $.verbose is built(:bind) }
 
@@ -89,27 +94,51 @@ my sub args-to-capture(@words) {
 # Just a visual divider
 sub line() { say "-" x 80 }
 
+# Complete shortened primary commands
+sub additional-completions($line, $pos) {
+    # not longer at the first word
+    with $line.index(" ") -> $index {
+        my @words = $line.words;
+        if @words[1].lc -> $target {
+            my $before  := $line.substr(0,$index + 1);
+            my $capture := args-to-capture(@words);
+            if $eco.find-use-targets(|$capture).sort(*.fc) -> @targets {
+                @targets.map({
+                    $before ~ $_ if .lc.starts-with($target)
+                }).List
+            }
+        }
+    }
+
+    # still at the first word
+    else {
+        $commands.primaries.map({
+            "$_ " if .starts-with($line)
+        }).List
+    }
+}
+
 #- help ------------------------------------------------------------------------
 
 sub help($_) {
     say "Available commands:";
     line;
-    say $*COMMANDS.primaries().join(" ").naive-word-wrapper;
+    say $commands.primaries().join(" ").naive-word-wrapper;
 }
 
 #- handlers --------------------------------------------------------------------
 
 my sub catch($_) {
-    setter-getter-bool $_, 'catch', 'exception catching', :object($*COMMANDS)
+    setter-getter-bool $_, 'catch', 'exception catching', :object($commands)
 }
 
 my sub dependencies($_) {
     my $capture := args-to-capture($_);
 
-    if $*ECO.resolve(|$capture) -> $identity {
+    if $eco.resolve(|$capture) -> $identity {
         my $verbose := $capture.verbose;
 
-        if $*ECO.dependencies($identity, :recurse($verbose)) -> @identities {
+        if $eco.dependencies($identity, :recurse($verbose)) -> @identities {
             say $verbose
               ?? "Recursive dependencies of $identity"
               !! "Dependencies of $identity
@@ -131,7 +160,6 @@ my sub distro($_) {
     my $capture := args-to-capture($_);
     my $needle  := build(|$capture);
 
-    my $eco := $*ECO;
     if $eco.find-distro-names(|$capture).sort(*.fc) -> @names {
         my $verbose := $capture.verbose;
 
@@ -160,10 +188,10 @@ Add 'verbose' to also see their frequency";
 
 my sub set-ecosystem($_) {
     with .[1] {
-        $*APP.load-ecosystem($_);
+        $app.load-ecosystem($_);
     }
     else {
-        say "Using the $*APP.ecosystem() ecosystem";
+        say "Using the $app.ecosystem() ecosystem";
     }
 }
 
@@ -171,7 +199,6 @@ my sub identity($_) {
     my $capture := args-to-capture($_);
     my $needle  := build(|$capture);
 
-    my $eco := $*ECO;
     my $verbose := $capture.verbose;
     if $eco.find-identities(|$capture, :all($verbose)).sort(*.fc) -> @ids {
         say $verbose
@@ -195,7 +222,6 @@ my sub meta($_) {
     $capture       := Capture.new(:@list, :hash($capture.hash));
 
     my $needle := build(|$capture);
-    my $eco := $*ECO;
     if $eco.resolve(|$capture) -> $identity {
         if $eco.identities{$identity} -> $found {
             say "Meta information of $identity @additional[]";
@@ -223,7 +249,6 @@ my sub reverse-dependencies($_) {
     my $capture := args-to-capture($_);
     my $needle := build(|$capture);
 
-    my $eco := $*ECO;
     with $eco.resolve(|$capture) // $needle -> $identity {
         if $capture.verbose {
             if $eco.reverse-dependencies{$identity} -> @identities {
@@ -266,7 +291,7 @@ my sub river($_) {
     say "Add 'verbose' to also see the actual dependees"
       unless $verbose;
 
-    for $*ECO.river.sort( -> $a, $b {
+    for $eco.river.sort( -> $a, $b {
         $b.value.elems cmp $a.value.elems
           || $a.key.fc cmp $b.key.fc
     }).head($top) {
@@ -279,7 +304,7 @@ my sub unresolvable($_) {
     my $capture := args-to-capture($_);
     my $verbose := $capture.verbose;
 
-    if $*ECO.unresolvable-dependencies(:all($verbose)) -> %ud {
+    if $eco.unresolvable-dependencies(:all($verbose)) -> %ud {
         say $verbose
           ?? "All unresolvable identities"
           !! "Unresolvable identities in most recent versions only
@@ -304,8 +329,8 @@ my sub unversioned($_) {
     my $capture := args-to-capture($_);
     my $verbose := $capture.verbose;
 
-    my @unversioned = $*ECO.unversioned-distro-names;
-    say "@unversioned.elems() distributions without any release with a valid version";
+    my @unversioned = $eco.unversioned-distro-names;
+    say "Found @unversioned.elems() distributions that did not have a release with a valid version";
     if $verbose {
         line;
         .say for @unversioned;
@@ -320,7 +345,6 @@ my sub use-target($_) {
     my $capture := args-to-capture($_);
     my $needle  := build(|$capture);
 
-    my $eco := $*ECO;
     if $eco.find-use-targets(|$capture).sort(*.fc) -> @use-targets {
         my $verbose := $capture.verbose;
 
@@ -349,7 +373,7 @@ Add 'verbose' to also see their distribution";
 
 #- commands --------------------------------------------------------------------
 
-my $commands = Commands.new(
+$commands := Commands.new(
   default  => { say "Unrecognized command: $_" if $_ },
   commands => (
     api                  => { setter-getter $_, 'api' },
@@ -358,7 +382,7 @@ my $commands = Commands.new(
     dependencies         => &dependencies,
     distro               => &distro,
     ecosystem            => &set-ecosystem,
-    editor               => { say $*ECO.prompt.editor-name() },
+    editor               => { say $eco.prompt.editor-name() },
     exit                 => { last },
     from                 => { setter-getter $_, 'from' },
     help                 => &help,
@@ -374,13 +398,6 @@ my $commands = Commands.new(
     version              => { setter-getter $_, 'ver', 'version' },
   ),
 );
-
-# Complete shortened primary commands
-sub additional-completions($line, $) {
-    $commands.primaries.map({
-        "$_ " if .starts-with($line)
-    }).List
-}
 
 #- App::Ecosystems -------------------------------------------------------------
 
@@ -421,8 +438,8 @@ class App::Ecosystems {
 
     method run(App::Ecosystems:D:) {
         self.load-ecosystem without $!eco;
-        my $*APP := self;
-        my $*ECO := $!eco;
+        $app := self;
+        $eco := $!eco;
         loop {
             last without my $line = $!prompt.read("$!ecosystem > ");
             $commands.process($line);
