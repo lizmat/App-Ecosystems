@@ -80,10 +80,10 @@ Show the dependencies of a given distribution name. If the distribution name is 
 
 You can also specify a version if you'd like to see the dependency information of that version of the distribution.
 
-distro
-------
+distros
+-------
 
-    rea > distro Agnostic
+    rea > distros Agnostic
     Distributions that match 'Agnostic'
     Add 'verbose' to also see their frequency
     --------------------------------------------------------------------------------
@@ -93,6 +93,8 @@ distro
     Map::Agnostic
 
 Show the names of the distributions with the given search term. For now any distribution name that contains the given string, will be included.
+
+The search term may be expressed as a regular expression.
 
 ecosystem
 ---------
@@ -139,14 +141,25 @@ help
     rea > help
     Available commands:
     --------------------------------------------------------------------------------
-    api authority catch dependencies distro ecosystem editor exit from help
-    identity meta quit reverse-dependencies river unresolvable unversioned
+    api authority catch dependencies distros ecosystem editor exit from help
+    identities meta quit reverse-dependencies river unresolvable unversioned
     use-target verbose version
 
 Show available commands.
 
-identity
---------
+identities
+----------
+
+    rea > identities SSH::LibSSH
+    Most recent version of identities that match 'SSH::LibSSH'
+    Add 'verbose' to see all identities
+    --------------------------------------------------------------------------------
+    SSH::LibSSH:ver<0.9.2>:auth<zef:raku-community-modules>
+    SSH::LibSSH::Tunnel:ver<0.0.9>:auth<zef:massa>
+
+Show the most recent versions of the identities that match the given search term, either as distribution name or `use` target.
+
+The search term may be expressed as a regular expression.
 
 meta
 ----
@@ -190,6 +203,14 @@ Exit and save any history.
 reverse-dependencies
 --------------------
 
+    rea > reverse-dependencies Ecosystem
+    Reverse dependencies of Ecosystem
+    --------------------------------------------------------------------------------
+    App::Ecosystems
+    CLI::Ecosystem
+
+Show the distribution names that have a dependency on the given identity.
+
 river
 -----
 
@@ -205,6 +226,8 @@ Show the N distributions (defaults to **3**) that have the most reverse dependen
 unresolvable
 ------------
 
+Current semantics are less than useful. Please ignore until fixed.
+
 unversioned
 -----------
 
@@ -212,7 +235,7 @@ unversioned
     Found 105 distributions that did not have a release with a valid version
     Add 'verbose' to list the distribution names
 
-Show how many distributions there are in the ecosystem without valid version information (and which did **not** have a later release with a valid version value). Optionally also list the names of these distributions.
+Show how many distributions there are in the ecosystem without valid version information (and which did **not** have a later release with a valid version value). Optionally also list the identities of these distributions.
 
 use-target
 ----------
@@ -224,7 +247,9 @@ use-target
     Crane::Add
     Crane::At
 
-Show the names of the `use` targets with the given search term (aka search all keys that are specified in `provides` sections of distributions in the ecosystem. For now, any name that contains the given string, will be included.
+Show the names of the `use` targets with the given search term (aka search all keys that are specified in `provides` sections of distributions in the ecosystem.
+
+The search term may be expressed as a regular expression.
 
 verbose
 -------

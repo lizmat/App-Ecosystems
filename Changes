@@ -2,6 +2,18 @@ Revision history for App::Ecosystems
 
 {{$NEXT}}
 
+0.0.3  2024-11-29T19:02:38+01:00
+    - Show header with info of loaded ecosystem
+    - Allow "zef" as an alias for "fez"
+    - Changed "identity" keyword to "identities"
+    - Changed "distro" keyword to "distros"
+    - Allow a regex to be specified with "distro",
+      "identities" and "use-targets"
+    - Bumped dependency on "Ecosystem" to fix loading of
+      'cpan' and 'p6c' ecosystems, use of .longname and
+      using a regex with "find-identities"
+    - Updated some more documentation
+
 0.0.2  2024-11-28T20:56:42+01:00
     - Bumped dependency on "Ecosystem" to fix handling of
       distributions without a name

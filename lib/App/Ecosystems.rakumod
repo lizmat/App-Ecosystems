@@ -1,7 +1,7 @@
 #- prologue --------------------------------------------------------------------
 
 use Commands:ver<0.0.3+>:auth<zef:lizmat>;
-use Ecosystem:ver<0.0.21+>:auth<zef:lizmat>;
+use Ecosystem:ver<0.0.24+>:auth<zef:lizmat>;
 use Identity::Utils:ver<0.0.11+>:auth<zef:lizmat>;
 use Prompt:ver<0.0.6+>:auth<zef:lizmat>;
 
@@ -57,10 +57,10 @@ my sub args-to-capture(@words) {
     my $verbose = $app.verbose;
     my role verbose { has $.verbose is built(:bind) }
 
-    sub add-key($key, $value) {
+    sub add-key($word, $key, $value) {
         $key eq any-identity-parts
           ?? (%hash{$key} := $value)
-          !! say "'$key' is not a supported key";
+          !! @list.push($word)
     }
 
     for @words.skip.map({
@@ -72,11 +72,15 @@ my sub args-to-capture(@words) {
             $verbose = True;
         }
         orwith $word.index("=",1) -> $index {
-            add-key($word.substr(0,$index), $word.substr($index + 1));
+            add-key($word, $word.substr(0,$index), $word.substr($index + 1));
         }
         elsif $word.ends-with('>') {
-            add-key($word.substr(0,$_), $word.substr($_ + 1).chop)
-              with $word.index('<');
+            with $word.index('<') {
+                add-key($word, $word.substr(0,$_), $word.substr($_ + 1).chop);
+            }
+            else {
+                @list.push: $word;
+            }
         }
         else {
             @list.push: $word;
@@ -88,7 +92,25 @@ my sub args-to-capture(@words) {
             %hash{$_} := $default;
         }
     }
+
     Capture.new(:@list, :%hash) but verbose($verbose)
+}
+
+# Change the first positional of the capture into a regex if it
+# looks like a regex
+sub targetize1st(Capture:D $capture) {
+    if $capture.list -> @positionals {
+        my $target := target @positionals.head;
+        @positionals[0] = $target if $target ~~ Regex;
+    }
+}
+
+# Check string for special characters and change it into a regex if
+# any found, otherwise return unchanged
+sub target(Str:D $string) {
+    $string.contains(('.','^','$','\\','<<','>>').any)
+      ?? "/:i $string.subst('::','\\:\\:',:g) /".EVAL
+      !! $string
 }
 
 # Just a visual divider
@@ -156,10 +178,11 @@ Add 'verbose' for recursive depencies";
     }
 }
 
-my sub distro($_) {
+my sub distros($_) {
     my $capture := args-to-capture($_);
     my $needle  := build(|$capture);
 
+    targetize1st($capture);
     if $eco.find-distro-names(|$capture).sort(*.fc) -> @names {
         my $verbose := $capture.verbose;
 
@@ -191,16 +214,17 @@ my sub set-ecosystem($_) {
         $app.load-ecosystem($_);
     }
     else {
-        say "Using the $app.ecosystem() ecosystem";
+        say "Using the $eco.longname()";
     }
 }
 
-my sub identity($_) {
+my sub identities($_) {
     my $capture := args-to-capture($_);
     my $needle  := build(|$capture);
-
     my $verbose := $capture.verbose;
-    if $eco.find-identities(|$capture, :all($verbose)).sort(*.fc) -> @ids {
+
+    targetize1st($capture);
+    if $eco.find-identities(|$capture, :all($verbose)) -> @ids {
         say $verbose
           ?? "All identities that match '$needle'"
           !! "Most recent version of identities that match '$needle'
@@ -349,10 +373,11 @@ my sub unversioned($_) {
 
 my sub use-target($_) {
     my $capture := args-to-capture($_);
+    my $verbose := $capture.verbose;
     my $needle  := build(|$capture);
 
-    if $eco.find-use-targets(|$capture).sort(*.fc) -> @use-targets {
-        my $verbose := $capture.verbose;
+    targetize1st($capture);
+    if $eco.find-use-targets(|$capture).sort(*.fc) -> @targets {
 
         say $verbose
           ?? "Use targets that match $needle and their distribution"
@@ -361,15 +386,15 @@ Add 'verbose' to also see their distribution";
         line;
 
         if $verbose {
-            for @use-targets -> $use-target {
-                my @distros = $eco.distros-of-use-target($use-target);
-                say @distros == 1 && $use-target eq @distros.head
-                  ?? $use-target
-                  !! "$use-target (@distros[])";
+            for @targets -> $target {
+                my @distros = $eco.distros-of-use-target($target);
+                say @distros == 1 && $target eq @distros.head
+                  ?? $target
+                  !! "$target (@distros[])";
             }
         }
         else {
-            .say for @use-targets;
+            .say for @targets;
         }
     }
     else {
@@ -386,13 +411,13 @@ $commands := Commands.new(
     authority            => { setter-getter $_, 'auth', 'authority' },
     catch                => &catch,
     dependencies         => &dependencies,
-    distro               => &distro,
+    distros              => &distros,
     ecosystem            => &set-ecosystem,
     editor               => { say $app.prompt.editor-name() },
     exit                 => { last },
     from                 => { setter-getter $_, 'from' },
     help                 => &help,
-    identity             => &identity,
+    identities           => &identities,
     meta                 => &meta,
     quit                 => { last },
     reverse-dependencies => &reverse-dependencies,
@@ -426,6 +451,15 @@ class App::Ecosystems {
         $history = ($*HOME || $*TMPDIR).add(".raku/$history")
           if $history ~~ Str && !$history.contains(/\W/);
         $!prompt := Prompt.new(:$history, :&additional-completions);
+        %!ecosystems =
+          cpan => Any,
+          fez  => Any,
+          rea  => Any,
+          p6c  => Any
+        ;
+
+        # Alias "zef" to "fez"
+        .<zef> := .<fez> with %!ecosystems;
     }
 
     method load-ecosystem($ecosystem = $!ecosystem) {
@@ -433,12 +467,22 @@ class App::Ecosystems {
             $!ecosystem = $ecosystem;
         }
         elsif %!ecosystems{$ecosystem}:exists {
-            say "Loading $ecosystem ecosystem...";
-            %!ecosystems{$ecosystem} := $!eco := Ecosystem.new(:$ecosystem);
+            my $message = "Loading $ecosystem ecosystem...";
+            print $message;
+            %!ecosystems{$ecosystem} =
+              $eco := $!eco = Ecosystem.new(:$ecosystem);
+            print "\b" x $message.chars;
             $!ecosystem = $ecosystem;
         }
         else {
-            say "Unknown $ecosystem";
+            say "Unknown ecosystem '$ecosystem'";
+            return;
+        }
+
+        say "Ecosystem: $eco.longname() ('$ecosystem' $eco.identities.elems() identities)";
+        say "  Updated: $eco.IO.modified.DateTime.Str.substr(0,19)";
+        with $eco.least-recent-release -> $from {
+            say "   Period: $from - $eco.most-recent-release()";
         }
     }
 
@@ -447,7 +491,7 @@ class App::Ecosystems {
         $app := self;
         $eco := $!eco;
         loop {
-            last without my $line = $!prompt.read("$!ecosystem > ");
+            last without my $line = $!prompt.read("\n$!ecosystem > ");
             $commands.process($line);
 
             if $line ne $!last-line {
