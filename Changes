@@ -2,6 +2,12 @@ Revision history for App::Ecosystems
 
 {{$NEXT}}
 
+0.0.4  2024-11-30T17:19:53+01:00
+    - Bumped dependency on "Commands" to get default in-depth
+      help handling
+    - Tweaked documentation a bit
+    - Added in-depth help for all currently supported commands
+
 0.0.3  2024-11-29T19:02:38+01:00
     - Show header with info of loaded ecosystem
     - Allow "zef" as an alias for "fez"

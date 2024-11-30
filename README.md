@@ -9,7 +9,10 @@ SYNOPSIS
 ========
 
     $ ecosystems
-    Loading rea ecosystem...
+    Ecosystem: Raku Ecosystem Archive ('rea' 12030 identities)
+      Updated: 2024-11-30T11:52:48
+       Period: 2011-05-10 - 2024-11-30
+
     rea >
 
 DESCRIPTION
@@ -57,7 +60,9 @@ catch
     rea > catch off
     Exception catching set to OFF
 
-Show whether exceptions will be caught or not, or change that setting. By deault any exceptions during execution will be caught and only a one-line message of the error will be shown. By default it is **ON**. Switching it to **OFF** will cause an exception to show a complete backtrace and exit the program, which may be desirable during debugging and/or error reporting.
+Show whether exceptions will be caught or not, or change that setting.
+
+By default any exceptions during execution will be caught and only a one-line message of the error will be shown. By default it is **ON**. Switching it to **OFF** will cause an exception to show a complete backtrace and exit the program, which may be desirable during debugging and/or error reporting.
 
 dependencies
 ------------
@@ -143,9 +148,9 @@ help
     --------------------------------------------------------------------------------
     api authority catch dependencies distros ecosystem editor exit from help
     identities meta quit reverse-dependencies river unresolvable unversioned
-    use-target verbose version
+    use-targets verbose version
 
-Show available commands.
+Show available commands if used without additional argument. If a command is specified as an additional argument, show any in-depth information about that command.
 
 identities
 ----------
@@ -190,7 +195,7 @@ meta
       "version": "0.0.2"
     }
 
-Show the meta information of the given distribution name.
+Show the meta information of the given distribution name as it was found in the currently active ecosystem. Note that this may be subtly different from the contents of the META6.json file becomes an ecosystem may have added fields and/or have updated fields for that particular ecosystem (such as "source-url").
 
 quit
 ----
@@ -237,17 +242,17 @@ unversioned
 
 Show how many distributions there are in the ecosystem without valid version information (and which did **not** have a later release with a valid version value). Optionally also list the identities of these distributions.
 
-use-target
-----------
+use-targets
+-----------
 
-    rea > use-target Crane::A
+    rea > use-targets Crane::A
     Use targets that match Crane::A
     Add 'verbose' to also see their distribution
     --------------------------------------------------------------------------------
     Crane::Add
     Crane::At
 
-Show the names of the `use` targets with the given search term (aka search all keys that are specified in `provides` sections of distributions in the ecosystem.
+Show the names of the `use` targets with the given search term (aka search all keys that are specified in `provides` sections of distributions in the ecosystem).
 
 The search term may be expressed as a regular expression.
 

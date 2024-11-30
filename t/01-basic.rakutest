@@ -1,6 +1,7 @@
 use Test;
-use App::Ecosystems;
 
-pass "replace me";
+plan 1;
 
-done-testing;
+use-ok "App::Ecosystems";
+
+# vim: expandtab shiftwidth=4

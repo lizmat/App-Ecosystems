@@ -1,6 +1,6 @@
 #- prologue --------------------------------------------------------------------
 
-use Commands:ver<0.0.3+>:auth<zef:lizmat>;
+use Commands:ver<0.0.4+>:auth<zef:lizmat>;
 use Ecosystem:ver<0.0.24+>:auth<zef:lizmat>;
 use Identity::Utils:ver<0.0.11+>:auth<zef:lizmat>;
 use Prompt:ver<0.0.6+>:auth<zef:lizmat>;
@@ -142,10 +142,137 @@ sub additional-completions($line, $pos) {
 
 #- help ------------------------------------------------------------------------
 
-sub help($_) {
-    say "Available commands:";
+my constant %help =
+  api => q:to/API/,
+Show or set the default "api" value to be used in ecosystem searches.
+API
+
+  authority => q:to/AUTHORITY/,
+Show or set the default "auth" value to be used in ecosystem searches.
+AUTHORITY
+
+  catch => q:to/CATCH/,
+Show whether exceptions will be caught or not, or change that setting.
+
+By default any exceptions during execution will be caught and only a
+one-line message of the error will be shown.  By default it is ON.
+Switching it to OFF will cause an exception to show a complete
+backtrace and exit the program, which may be desirable during debugging
+and/or error reporting.
+CATCH
+
+  dependencies => q:to/DEPENDENCIES/,
+Show the dependencies of a given distribution name.  If the distribution
+name is not fully qualified with C<auth>, C<ver> and C<api>, then the
+most recent version will be assumed.
+
+You can also specify a version if you'd like to see the dependency
+information of that version of the distribution.
+DEPENDENCIES
+
+  distros => q:to/DISTROS/,
+Show the names of the distributions with the given search term.  For now
+any distribution name that contains the given string, will be included.
+
+The search term may be expressed as a regular expression.
+DISTROS
+
+  ecosystem => q:to/ECOSYSTEM/,
+Show or set the ecosystem to be used in ecosystem searches.  Note that
+the currently used ecosystem is also shown in the prompt.
+ECOSYSTEM
+
+  editor => q:to/EDITOR/,
+Show the name of the underlying editor that is being used.  Note that
+only Linenoise and LineEditor allow tab-completions.
+EDITOR
+
+  from => q:to/FROM/,
+Show or set the default "from" value to be used in ecosystem searches.
+FROM
+
+  help => q:to/HELP/,
+Show available commands if used without additional argument.  If a
+command is specified as an additional argument, show any in-depth
+information about that command.
+HELP
+
+  identities => q:to/IDENTITIES/,
+Show the most recent versions of the identities that match the given search
+term, either as distribution name or C<use> target.
+
+The search term may be expressed as a regular expression.
+IDENTITIES
+
+  meta => q:to/META/,
+Show the meta information of the given distribution name as it was found
+in the currently active ecosystem.  Note that this may be subtly different
+from the contents of the META6.json file becomes an ecosystem may have
+added fields and/or have updated fields for that particular ecosystem
+(such as "source-url").
+META
+
+  quit => q:to/QUIT/,
+Exit and save any history.
+QUIT
+
+  reverse-dependencies => q:to/REVERSE-DEPENDENCIES/,
+Show the distribution names that have a dependency on the given identity.
+REVERSE-DEPENDENCIES
+
+  river => q:to/RIVER/,
+Show the N distributions (defaults to B<3>) that have the most reverse
+dependencies (aka: are most "up-stream").
+RIVER
+
+  unversioned => q:to/UNVERSIONED/,
+Show how many distributions there are in the ecosystem without valid
+version information (and which did B<not> have a later release with a
+valid version value).  Optionally also list the identities of these
+distributions.
+UNVERSIONED
+
+  use-targets => q:to/USE-TARGETS/,
+Show the names of the use targets with the given search term
+(aka search all keys that are specified in provides sections
+of distributions in the ecosystem).
+
+The search term may be expressed as a regular expression.
+USE-TARGETS
+
+  verbose => q:to/VERBOSE/,
+Show or set the default verbosity level to be used in showing the result
+of ecosystem searches.  The default is OFF.
+VERBOSE
+
+  version => q:to/VERSION/,
+Show or set the default "ver" value to be used in ecosystem searches.
+VERSION
+;
+
+sub default($_) {
+    say "No extended help available for: $_"
+}
+
+sub handler($command, $text) {
+    say "More information about: $command";
     line;
-    say $commands.primaries().join(" ").naive-word-wrapper;
+    say $text.chomp
+}
+
+sub help($_) {
+    state $help = $*COMMANDS.extended-help-from-hash(
+      %help, :&default, :&handler
+    );
+    if .skip.join(" ") -> $deeper {
+        $help.process($deeper)
+    }
+    else {
+        say "Available commands:";
+        line;
+        say $commands.primaries().join(" ").naive-word-wrapper;
+        say "More in-depth help available with 'help <command>'";
+    }
 }
 
 #- handlers --------------------------------------------------------------------
@@ -371,7 +498,7 @@ my sub unversioned($_) {
     }
 }
 
-my sub use-target($_) {
+my sub use-targets($_) {
     my $capture := args-to-capture($_);
     my $verbose := $capture.verbose;
     my $needle  := build(|$capture);
@@ -424,7 +551,7 @@ $commands := Commands.new(
     river                => &river,
     unresolvable         => &unresolvable,
     unversioned          => &unversioned,
-    use-target           => &use-target,
+    use-targets          => &use-targets,
     verbose              => { setter-getter-bool $_, 'verbose', 'verbosity' },
     version              => { setter-getter $_, 'ver', 'version' },
   ),
