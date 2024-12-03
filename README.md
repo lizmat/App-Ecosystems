@@ -51,6 +51,19 @@ authority
 
 Show or set the default "auth" value to be used in ecosystem searches.
 
+authors
+-------
+
+    rea > authors
+    Found 600 unique author names
+
+    rea > authors liz
+    Authors matching 'liz'
+    --------------------------------------------------------------------------------
+    Elizabeth Mattijsen (230x)
+
+Search authors related information (the information in the meta tags "author" and "authors").
+
 catch
 -----
 
@@ -227,6 +240,20 @@ river
     MIME::Base64 (233)
 
 Show the N distributions (defaults to **3**) that have the most reverse dependencies (aka: are most "up-stream").
+
+tags
+----
+
+    rea > tags
+    Found 1790 unique tags
+
+    rea > tags conc
+    Tags matching 'conc'
+    --------------------------------------------------------------------------------
+    CONCURRENCY
+    CONCURRENT (8x)
+
+Search tag related information (the information in the meta tag "tags").
 
 unresolvable
 ------------

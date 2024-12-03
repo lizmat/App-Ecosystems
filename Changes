@@ -2,6 +2,13 @@ Revision history for App::Ecosystems
 
 {{$NEXT}}
 
+0.0.5  2024-12-03T14:33:29+01:00
+    - Bumped dependency on "Ecosystem" to get direct calling
+      functionality of Map::Match, and "authors" and "tags" support
+    - Bumped dependency on "Commands" to get "resolve-command"
+    - Added support for "authors" and "tags" commands
+    - Added some tags
+
 0.0.4  2024-11-30T17:19:53+01:00
     - Bumped dependency on "Commands" to get default in-depth
       help handling

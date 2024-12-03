@@ -65,6 +65,23 @@ Default authority set to 'zef:raku-community-modules'
 
 Show or set the default "auth" value to be used in ecosystem searches.
 
+=head2 authors
+
+=begin output
+
+rea > authors
+Found 600 unique author names
+
+rea > authors liz
+Authors matching 'liz'
+--------------------------------------------------------------------------------
+Elizabeth Mattijsen (230x)
+
+=end output
+
+Search authors related information (the information in the meta tags
+"author" and "authors").
+
 =head2 catch
 
 =begin output
@@ -302,6 +319,23 @@ MIME::Base64 (233)
 
 Show the N distributions (defaults to B<3>) that have the most reverse
 dependencies (aka: are most "up-stream").
+
+=head2 tags
+
+=begin output
+
+rea > tags
+Found 1790 unique tags
+
+rea > tags conc
+Tags matching 'conc'
+--------------------------------------------------------------------------------
+CONCURRENCY
+CONCURRENT (8x)
+
+=end output
+
+Search tag related information (the information in the meta tag "tags").
 
 =head2 unresolvable
 
