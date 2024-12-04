@@ -43,7 +43,7 @@ authors
 
     rea > authors liz
     Authors matching 'liz'
-    --------------------------------------------------------------------------------
+    ----------------------------------------------------------------------
     Elizabeth Mattijsen (230x)
 
 Search authors related information (the information in the meta tags "author" and "authors").
@@ -111,7 +111,7 @@ dependencies
     rea > dependencies Map::Match
     Dependencies of Map::Match:ver<0.0.5>:auth<zef:lizmat>
     Add 'verbose' for recursive depencies
-    --------------------------------------------------------------------------------
+    ----------------------------------------------------------------------
     Hash::Agnostic:ver<0.0.16>:auth<zef:lizmat>
     Map::Agnostic:ver<0.0.10>:auth<zef:lizmat>
 
@@ -120,7 +120,7 @@ Show the dependencies of a given distribution name. If the distribution name is 
     rea > dependencies Map::Match :ver<0.0.1>
     Dependencies of Map::Match:ver<0.0.1>:auth<zef:lizmat>
     Add 'verbose' for recursive depencies
-    --------------------------------------------------------------------------------
+    ----------------------------------------------------------------------
     Hash::Agnostic:ver<0.0.10>:auth<zef:lizmat>
     Map::Agnostic:ver<0.0.6>:auth<zef:lizmat>
 
@@ -132,7 +132,7 @@ distros
     rea > distros Agnostic
     Distributions that match 'Agnostic'
     Add 'verbose' to also see their frequency
-    --------------------------------------------------------------------------------
+    ----------------------------------------------------------------------
     Array::Agnostic
     Hash::Agnostic
     List::Agnostic
@@ -175,7 +175,7 @@ help
 
     rea > help
     Available commands:
-    --------------------------------------------------------------------------------
+    ----------------------------------------------------------------------
     api authority catch dependencies distros ecosystem editor exit from help
     identities meta quit reverse-dependencies river unresolvable unversioned
     use-targets verbose version
@@ -188,7 +188,7 @@ identities
     rea > identities SSH::LibSSH
     Most recent version of identities that match 'SSH::LibSSH'
     Add 'verbose' to see all identities
-    --------------------------------------------------------------------------------
+    ----------------------------------------------------------------------
     SSH::LibSSH:ver<0.9.2>:auth<zef:raku-community-modules>
     SSH::LibSSH::Tunnel:ver<0.0.9>:auth<zef:massa>
 
@@ -202,7 +202,7 @@ meta
     rea > meta actions
     Meta information of actions:ver<0.0.2>:auth<zef:lizmat>
     Resolved from: actions
-    --------------------------------------------------------------------------------
+    ----------------------------------------------------------------------
     {
       "auth": "zef:lizmat",
       "authors": [
@@ -240,7 +240,7 @@ reverse-dependencies
 
     rea > reverse-dependencies Ecosystem
     Reverse dependencies of Ecosystem
-    --------------------------------------------------------------------------------
+    ----------------------------------------------------------------------
     App::Ecosystems
     CLI::Ecosystem
 
@@ -266,7 +266,7 @@ tags
 
     rea > tags conc
     Tags matching 'conc'
-    --------------------------------------------------------------------------------
+    ----------------------------------------------------------------------
     CONCURRENCY
     CONCURRENT (8x)
 
@@ -302,7 +302,7 @@ use-targets
     rea > use-targets Crane::A
     Use targets that match Crane::A
     Add 'verbose' to also see their distribution
-    --------------------------------------------------------------------------------
+    ----------------------------------------------------------------------
     Crane::Add
     Crane::At
 
