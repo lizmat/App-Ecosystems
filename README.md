@@ -9,9 +9,15 @@ SYNOPSIS
 ========
 
     $ ecosystems
-    Ecosystem: Raku Ecosystem Archive ('rea' 12030 identities)
-      Updated: 2024-11-30T11:52:48
-       Period: 2011-05-10 - 2024-11-30
+    Ecosystem: Raku Ecosystem Archive ('rea' 12069 identities)
+      Updated: 2024-12-04T09:32:33
+       Period: 2011-05-10 - 2024-12-03
+
+    rea >
+
+    % ecosystems --ecosystem=zef
+    Ecosystem: Zef (Fez) Ecosystem Content Storage ('zef' 5002 identities)
+      Updated: 2024-12-03T19:42:25
 
     rea >
 
@@ -28,28 +34,6 @@ COMMANDS
 These are the available commands in alphabetical order. Note that if `Linenoise` or `Terminal::LineEditor` is used as the underlying interface, tab completion will be available for all of these commands.
 
 Also note that each command may be shortened to a unique root: so just entering "a" would be ambiguous, but "ap" would give you the "api" functionality.
-
-api
----
-
-    rea > api
-    Default api is: 'Any'
-
-    rea > api 1
-    Default api set to '1'
-
-Show or set the default "api" value to be used in ecosystem searches.
-
-authority
----------
-
-    rea > auth
-    Default authority is: 'Any'
-
-    rea > auth zef:raku-community-modules
-    Default authority set to 'zef:raku-community-modules'
-
-Show or set the default "auth" value to be used in ecosystem searches.
 
 authors
 -------
@@ -76,6 +60,50 @@ catch
 Show whether exceptions will be caught or not, or change that setting.
 
 By default any exceptions during execution will be caught and only a one-line message of the error will be shown. By default it is **ON**. Switching it to **OFF** will cause an exception to show a complete backtrace and exit the program, which may be desirable during debugging and/or error reporting.
+
+default-api
+-----------
+
+    rea > default-api
+    Default api is: 'Any'
+
+    rea > default-api 1
+    Default api set to '1'
+
+Show or set the default "api" value to be used in ecosystem searches.
+
+default-auth
+------------
+
+    rea > default-auth
+    Default authority is: 'Any'
+
+    rea > default-auth zef:raku-community-modules
+    Default authority set to 'zef:raku-community-modules'
+
+Show or set the default "auth" value to be used in ecosystem searches.
+
+default-from
+------------
+
+    rea > default-from
+    Default from is: 'Any'
+
+    rea > default-from NQP
+    Default from set to 'NQP'
+
+Show or set the default "from" value to be used in ecosystem searches.
+
+default-ver
+-----------
+
+    rea > default-ver
+    Default version is: 'Any'
+
+    rea > default-ver 0.0.3+
+    Default version set to '0.0.3+'
+
+Show or set the default "ver" value to be used in ecosystem searches.
 
 dependencies
 ------------
@@ -118,11 +146,11 @@ ecosystem
 ---------
 
     rea > ecosystem
-    Using the rea ecosystem
+    Using the Raku Ecosystem Archive
 
     rea > ecosystem fez
-    Loading fez ecosystem...
-    fez >
+    Ecosystem: Zef (Fez) Ecosystem Content Storage ('zef' 4996 identities)
+      Updated: 2024-12-02T19:35:46
 
 Show or set the ecosystem to be used in ecosystem searches. Note that the currently used ecosystem is also shown in the prompt.
 
@@ -141,17 +169,6 @@ exit
     $
 
 Exit and save any history.
-
-from
-----
-
-    rea > from
-    Default from is: 'Any'
-
-    rea > from NQP
-    Default from set to 'NQP'
-
-Show or set the default "from" value to be used in ecosystem searches.
 
 help
 ----
@@ -269,6 +286,16 @@ unversioned
 
 Show how many distributions there are in the ecosystem without valid version information (and which did **not** have a later release with a valid version value). Optionally also list the identities of these distributions.
 
+update
+------
+
+    rea > update
+    Ecosystem: Raku Ecosystem Archive ('rea' 12066 identities)
+      Updated: 2024-12-03T19:02:03
+       Period: 2011-05-10 - 2024-12-03
+
+Update the in-memory information about the current ecosystem from its original source.
+
 use-targets
 -----------
 
@@ -293,17 +320,6 @@ verbose
     Verbosity set to ON
 
 Show or set the default verbosity level to be used in showing the result of ecosystem searches. The default is **OFF**.
-
-version
--------
-
-    rea > version
-    Default version is: 'Any'
-
-    rea > version 0.0.3+
-    Default version set to '0.0.3+'
-
-Show or set the default "ver" value to be used in ecosystem searches.
 
 SEE ALSO
 --------

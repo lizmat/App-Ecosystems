@@ -6,16 +6,22 @@ App::Ecosystems - Interactive Ecosystem Inspector
 
 =head1 SYNOPSIS
 
-=begin code
+=begin output
 
 $ ecosystems
-Ecosystem: Raku Ecosystem Archive ('rea' 12030 identities)
-  Updated: 2024-11-30T11:52:48
-   Period: 2011-05-10 - 2024-11-30
+Ecosystem: Raku Ecosystem Archive ('rea' 12069 identities)
+  Updated: 2024-12-04T09:32:33
+   Period: 2011-05-10 - 2024-12-03
 
 rea >
 
-=end code
+% ecosystems --ecosystem=zef
+Ecosystem: Zef (Fez) Ecosystem Content Storage ('zef' 5002 identities)
+  Updated: 2024-12-03T19:42:25
+
+rea >
+
+=end output
 
 =head1 DESCRIPTION
 
@@ -36,34 +42,6 @@ interface, tab completion will be available for all of these commands.
 Also note that each command may be shortened to a unique root: so
 just entering "a" would be ambiguous, but "ap" would give you the
 "api" functionality.
-
-=head2 api
-
-=begin output
-
-rea > api
-Default api is: 'Any'
-
-rea > api 1
-Default api set to '1'
-
-=end output
-
-Show or set the default "api" value to be used in ecosystem searches.
-
-=head2 authority
-
-=begin output
-
-rea > auth
-Default authority is: 'Any'
-
-rea > auth zef:raku-community-modules
-Default authority set to 'zef:raku-community-modules'
-
-=end output
-
-Show or set the default "auth" value to be used in ecosystem searches.
 
 =head2 authors
 
@@ -101,6 +79,62 @@ one-line message of the error will be shown.  By default it is B<ON>.
 Switching it to B<OFF> will cause an exception to show a complete
 backtrace and exit the program, which may be desirable during debugging
 and/or error reporting.
+
+=head2 default-api
+
+=begin output
+
+rea > default-api
+Default api is: 'Any'
+
+rea > default-api 1
+Default api set to '1'
+
+=end output
+
+Show or set the default "api" value to be used in ecosystem searches.
+
+=head2 default-auth
+
+=begin output
+
+rea > default-auth
+Default authority is: 'Any'
+
+rea > default-auth zef:raku-community-modules
+Default authority set to 'zef:raku-community-modules'
+
+=end output
+
+Show or set the default "auth" value to be used in ecosystem searches.
+
+=head2 default-from
+
+=begin output
+
+rea > default-from
+Default from is: 'Any'
+
+rea > default-from NQP
+Default from set to 'NQP'
+
+=end output
+
+Show or set the default "from" value to be used in ecosystem searches.
+
+=head2 default-ver
+
+=begin output
+
+rea > default-ver
+Default version is: 'Any'
+
+rea > default-ver 0.0.3+
+Default version set to '0.0.3+'
+
+=end output
+
+Show or set the default "ver" value to be used in ecosystem searches.
 
 =head2 dependencies
 
@@ -158,11 +192,11 @@ The search term may be expressed as a regular expression.
 =begin output
 
 rea > ecosystem
-Using the rea ecosystem
+Using the Raku Ecosystem Archive
 
 rea > ecosystem fez
-Loading fez ecosystem...
-fez >
+Ecosystem: Zef (Fez) Ecosystem Content Storage ('zef' 4996 identities)
+  Updated: 2024-12-02T19:35:46
 
 =end output
 
@@ -191,20 +225,6 @@ $
 =end output
 
 Exit and save any history.
-
-=head2 from
-
-=begin output
-
-rea > from
-Default from is: 'Any'
-
-rea > from NQP
-Default from set to 'NQP'
-
-=end output
-
-Show or set the default "from" value to be used in ecosystem searches.
 
 =head2 help
 
@@ -360,6 +380,20 @@ version information (and which did B<not> have a later release with a
 valid version value).  Optionally also list the identities of these
 distributions.
 
+=head2 update
+
+=begin output
+
+rea > update
+Ecosystem: Raku Ecosystem Archive ('rea' 12066 identities)
+  Updated: 2024-12-03T19:02:03
+   Period: 2011-05-10 - 2024-12-03
+
+=end output
+
+Update the in-memory information about the current ecosystem from its
+original source.
+
 =head2 use-targets
 
 =begin output
@@ -393,20 +427,6 @@ Verbosity set to ON
 
 Show or set the default verbosity level to be used in showing the result
 of ecosystem searches.  The default is B<OFF>.
-
-=head2 version
-
-=begin output
-
-rea > version
-Default version is: 'Any'
-
-rea > version 0.0.3+
-Default version set to '0.0.3+'
-
-=end output
-
-Show or set the default "ver" value to be used in ecosystem searches.
 
 =head2 SEE ALSO
 

@@ -2,6 +2,19 @@ Revision history for App::Ecosystems
 
 {{$NEXT}}
 
+0.0.6  2024-12-04T12:35:56+01:00
+    - Bumped dependency on "Ecosystem" to get "auths" method
+    - Added support for "auths" and "update" commands
+    - Renamed "api" action to "default-api"
+    - Renamed "authority" action to "default-auth"
+    - Renamed "from" action to "default-from"
+    - Renamed "version" action to "default-ver"
+    - Added dependency on "String::Utils" to get "word-at"
+    - Added dependency on "META::verauthapi" to get automatic
+      .^ver, .^auth, ^api setting
+    - Made completions fully functional
+    - Added much more interactive documentation
+
 0.0.5  2024-12-03T14:33:29+01:00
     - Bumped dependency on "Ecosystem" to get direct calling
       functionality of Map::Match, and "authors" and "tags" support
