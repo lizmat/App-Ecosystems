@@ -7,7 +7,7 @@
   ],
   "depends": [
     "Commands:ver<0.0.5+>:auth<zef:lizmat>",
-    "Ecosystem:ver<0.0.27+>:auth<zef:lizmat>",
+    "Ecosystem:ver<0.0.28+>:auth<zef:lizmat>",
     "Identity::Utils:ver<0.0.11+>:auth<zef:lizmat>",
     "META::verauthapi:ver<0.0.1>:auth<zef:lizmat>",
     "Prompt:ver<0.0.6+>:auth<zef:lizmat>",
@@ -29,5 +29,5 @@
   ],
   "test-depends": [
   ],
-  "version": "0.0.6"
+  "version": "0.0.7"
 }

@@ -1,7 +1,7 @@
 #- prologue --------------------------------------------------------------------
 
 use Commands:ver<0.0.5+>:auth<zef:lizmat>;
-use Ecosystem:ver<0.0.27+>:auth<zef:lizmat>;
+use Ecosystem:ver<0.0.28+>:auth<zef:lizmat>;
 use Identity::Utils:ver<0.0.11+>:auth<zef:lizmat>;
 use Prompt:ver<0.0.6+>:auth<zef:lizmat>;
 use String::Utils:ver<0.0.31+>:auth<zef:lizmat> <word-at>;
@@ -213,7 +213,6 @@ my sub authors($_) {
                     say "@identities.elems() recent $ids (co-)authored by '$author':";
                     line;
                     .say for @identities;
-                    say "";
                 }
                 else {
                     my $identities := @identities == 1
@@ -257,7 +256,6 @@ my sub auths($_) {
                     say "@identities.elems() recent $ids with auth '$auth':";
                     line;
                     .say for @identities;
-                    say "";
                 }
                 else {
                     my $identities := @identities == 1
@@ -439,6 +437,55 @@ my sub no-tags($_) {
     }
 }
 
+my sub release-dates($_) {
+    my $capture := args-to-capture($_);
+    my $verbose := $capture.verbose;
+
+    if $eco.ecosystem ne 'rea' {
+        say "Release dates are only provided by the Raku Ecosystem Archive.";
+    }
+    elsif $capture.head -> $needle {
+        if $eco.release-dates(target($needle), :p).sort(*.key.fc) -> @dates {
+            my $releases = @dates.map(*.value.elems).sum;
+            say "Found @dates.elems() dates matching '$needle' with $releases releases";
+
+            if $verbose {
+                line;
+                for @dates {
+                    my $date      := .key;
+                    my @identities = recent-identities(.value);
+                    if $verbose {
+                        my $ids := @identities == 1 ?? "identity" !! "identities";
+                        say "\n@identities.elems() recent $ids on $date:";
+                        line;
+                        .say for @identities;
+                    }
+                    else {
+                        my $identities := @identities == 1
+                          ?? ""
+                          !! " (" ~ @identities.elems ~ "x)";
+                        say "$date$identities";
+                    }
+                }
+            }
+        }
+        else {
+            say "No dates found matching '$needle'";
+        }
+    }
+    else {
+        my @dates = $eco.release-dates.keys;
+        if $verbose {
+            say "@dates.elems() unique release-dates:";
+            line;
+            .say for @dates.sort(*.fc);
+        }
+        else {
+            say "Found @dates.elems() unique release-dates";
+        }
+    }
+}
+
 my sub reverse-dependencies($_) {
     my $capture := args-to-capture($_);
     my $needle := build(|$capture);
@@ -511,7 +558,6 @@ my sub tags($_) {
                     say "@identities.elems() recent $ids with '$tag' tag:";
                     line;
                     .say for @identities;
-                    say "";
                 }
                 else {
                     my $identities := @identities == 1
@@ -555,7 +601,6 @@ Add 'verbose' to see all unresolvable identities";
             next if !$from && from($_);
             say "$_";
             say "  $_" for %ud{$_};
-            say "";
         }
     }
     else {
@@ -636,6 +681,7 @@ $commands := Commands.new(
     meta                 => &meta,
     no-tags              => &no-tags,
     quit                 => { last },
+    release-dates        => &release-dates,
     reverse-dependencies => &reverse-dependencies,
     river                => &river,
     tags                 => &tags,
@@ -767,6 +813,10 @@ NO-TAGS
   quit => q:to/QUIT/,
 Exit and save any history.
 QUIT
+
+  release-dates => q:to/RELEASE-DATES/,
+Show the dates and optionally the releases on those dates.
+RELEASE-DATES
 
   reverse-dependencies => q:to/REVERSE-DEPENDENCIES/,
 Show the distribution names that have a dependency on the given identity.

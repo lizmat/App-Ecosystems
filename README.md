@@ -235,6 +235,28 @@ quit
 
 Exit and save any history.
 
+release-dates
+-------------
+
+    rea > release-dates 2023
+    Found 332 dates matching '2023' with 1358 releases
+
+    rea > release-dates 2024-12-11 verbose
+    Found 1 dates matching '2024-12-11' with 2 releases
+    --------------------------------------------------------------------------------
+
+    2 recent identities on 2024-12-11:
+    --------------------------------------------------------------------------------
+    Graph:ver<0.0.25>:auth<zef:antononcube>
+    JavaScript::D3:ver<0.2.28>:auth<zef:antononcube>:api<1>
+
+Show the dates and optionally the releases on those dates (as found in the "release-date" field in the META6.json). Note that this field is only provided by the Raku Ecosystem Archive so far.
+
+unresolvable
+------------
+
+Current semantics are less than useful. Please ignore until fixed.
+
 reverse-dependencies
 --------------------
 

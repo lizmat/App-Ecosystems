@@ -2,6 +2,11 @@ Revision history for App::Ecosystems
 
 {{$NEXT}}
 
+0.0.7  2024-12-11T14:49:16+01:00
+    - Bumped dependency on "Ecosystem" to get "releas-dates"
+      method
+    - Added support for "release-dates" command
+
 0.0.6  2024-12-04T12:35:56+01:00
     - Bumped dependency on "Ecosystem" to get "auths" method
     - Added support for "auths" and "update" commands
