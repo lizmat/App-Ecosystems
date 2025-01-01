@@ -2,9 +2,9 @@
 
 use Commands:ver<0.0.5+>:auth<zef:lizmat>;
 use Ecosystem:ver<0.0.28+>:auth<zef:lizmat>;
-use Identity::Utils:ver<0.0.11+>:auth<zef:lizmat>;
+use Identity::Utils:ver<0.0.15+>:auth<zef:lizmat> <build from short-name>;
 use Prompt:ver<0.0.6+>:auth<zef:lizmat>;
-use String::Utils:ver<0.0.31+>:auth<zef:lizmat> <word-at>;
+use String::Utils:ver<0.0.32+>:auth<zef:lizmat> <word-at>;
 
 # The named parts of an identity
 my constant @identity-parts    = <ver auth api from>;

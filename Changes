@@ -2,6 +2,13 @@ Revision history for App::Ecosystems
 
 {{$NEXT}}
 
+0.0.8  2025-01-01T13:12:13+01:00
+    - Bumped dependency on Identity::Utils to allow
+      partial imports
+    - Bumped dependency on String::Utils because we can
+    - Fix import name clash by only importing subs from
+      Identity::Utils that are actually needed
+
 0.0.7  2024-12-11T14:49:16+01:00
     - Bumped dependency on "Ecosystem" to get "releas-dates"
       method
