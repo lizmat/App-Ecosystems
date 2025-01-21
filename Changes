@@ -1,6 +1,9 @@
 Revision history for App::Ecosystems
 
 {{$NEXT}}
+    - Bump dependencies to keep in sync
+    - Use new &subroutine specification for commands
+    - Update copyright year
 
 0.0.8  2025-01-01T13:12:13+01:00
     - Bumped dependency on Identity::Utils to allow

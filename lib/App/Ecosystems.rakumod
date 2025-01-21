@@ -1,9 +1,9 @@
 #- prologue --------------------------------------------------------------------
 
-use Commands:ver<0.0.5+>:auth<zef:lizmat>;
+use Commands:ver<0.0.6+>:auth<zef:lizmat>;
 use Ecosystem:ver<0.0.28+>:auth<zef:lizmat>;
-use Identity::Utils:ver<0.0.15+>:auth<zef:lizmat> <build from short-name>;
-use Prompt:ver<0.0.6+>:auth<zef:lizmat>;
+use Identity::Utils:ver<0.0.17+>:auth<zef:lizmat> <build from short-name>;
+use Prompt:ver<0.0.9+>:auth<zef:lizmat>;
 use String::Utils:ver<0.0.32+>:auth<zef:lizmat> <word-at>;
 
 # The named parts of an identity
@@ -282,6 +282,11 @@ my sub auths($_) {
     }
 }
 
+my sub default-api($_)  { setter-getter $_, 'api'               }
+my sub default-auth($_) { setter-getter $_, 'auth', 'authority' }
+my sub default-from($_) { setter-getter $_, 'from'              }
+my sub default-ver($_)  { setter-getter $_, 'ver', 'version'    }
+
 my sub dependencies($_) {
     my $capture := args-to-capture($_);
 
@@ -338,14 +343,8 @@ Add 'verbose' to also see the number of identities";
     }
 }
 
-my sub set-ecosystem($_) {
-    with .[1] {
-        $app.load-ecosystem($_);
-    }
-    else {
-        say "Using the $eco.longname()";
-    }
-}
+
+my sub editor($_) { say $app.prompt.editor-name }
 
 sub help($_) {
     if .skip.join(" ") -> $deeper {
@@ -584,6 +583,15 @@ my sub tags($_) {
     }
 }
 
+my sub set-ecosystem($_) {
+    with .[1] {
+        $app.load-ecosystem($_);
+    }
+    else {
+        say "Using the $eco.longname()";
+    }
+}
+
 my sub unresolvable($_) {
     my $capture := args-to-capture($_);
     my $verbose := $capture.verbose;
@@ -659,37 +667,21 @@ Add 'verbose' to also see their distribution";
     }
 }
 
+my sub verbose($_) { setter-getter-bool $_, 'verbose', 'verbosity' }
+
 #- commands --------------------------------------------------------------------
 
 $commands := Commands.new(
   default  => { say "Unrecognized command: $_" if $_ },
   commands => (
-    :&authors,
-    :&auths,
-    :&catch,
-    :default-api({ setter-getter $_, 'api' }),
-    :default-auth({ setter-getter $_, 'auth', 'authority' }),
-    :default-from({ setter-getter $_, 'from' }),
-    :default-ver({ setter-getter $_, 'ver', 'version' }),
-    :&dependencies,
-    :&distros,
     :ecosystem(&set-ecosystem),
-    :editor({ say $app.prompt.editor-name }),
     :exit({ last }),
-    :&help,
-    :&identities,
-    :&meta,
-    :&no-tags,
     :quit({ last }),
-    :&release-dates,
-    :&reverse-dependencies,
-    :&river,
-    :&tags,
-    :&unresolvable,
-    :&unversioned,
-    :&update,
-    :&use-targets,
-    :verbose({ setter-getter-bool $_, 'verbose', 'verbosity' }),
+
+    &authors, &auths, &catch, &default-api, &default-auth, &default-from,
+    &default-ver, &dependencies, &distros, &editor, &help, &identities,
+    &meta, &no-tags, &release-dates, &reverse-dependencies, &river,
+    &tags, &unresolvable, &unversioned, &update, &use-targets, &verbose
   ),
 );
 
@@ -962,7 +954,8 @@ NO-COMPLETIONS
 
 #- App::Ecosystems -------------------------------------------------------------
 
-class App::Ecosystems {
+class App::Ecosystems:ver<0.0.8>:auth<zef:lizmat> {
+
     has $.ecosystem = "rea";
     has $.ver     is rw;
     has $.auth    is rw;
@@ -1049,9 +1042,6 @@ class App::Ecosystems {
         $!prompt.save-history;
     }
 }
-
-# Set the ^ver, ^auth, ^api values
-use META::verauthapi $?DISTRIBUTION, App::Ecosystems;
 
 #- subroutines -----------------------------------------------------------------
 
