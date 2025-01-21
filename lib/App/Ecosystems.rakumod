@@ -954,7 +954,7 @@ NO-COMPLETIONS
 
 #- App::Ecosystems -------------------------------------------------------------
 
-class App::Ecosystems:ver<0.0.8>:auth<zef:lizmat> {
+class App::Ecosystems:ver<0.0.9>:auth<zef:lizmat> {
 
     has $.ecosystem = "rea";
     has $.ver     is rw;
